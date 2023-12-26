@@ -31,7 +31,7 @@ const { refValue, open, close } = useToggle()
 		</div>
 	</div>
 	<PopUp v-if="refValue" @close="close">
-		<PostUpdate v-if="post" :post="post" />
+		<PostUpdate v-if="post" :post="post" @post-updated="close"/>
 	</PopUp>
 </template>
 <style lang="scss">

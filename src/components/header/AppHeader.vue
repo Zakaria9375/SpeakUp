@@ -1,9 +1,7 @@
 <script setup>
 import { useAuthStore } from '@/stores/AuthStore'
 import SignedUser from '@/components/header/SignedUser.vue'
-
 const authStore = useAuthStore()
-
 </script>
 
 <template>
@@ -12,7 +10,7 @@ const authStore = useAuthStore()
 			<nav class="container">
 				<RouterLink to="/" class="logo-wrap" >
 					<div class="logo">
-						<img src="/src/assets/svg/logo.svg" alt="website logo" />
+						<img src="/static/svg/logo.svg" alt="website logo" />
 						<span>Speak up</span>
 					</div>
 				</RouterLink>

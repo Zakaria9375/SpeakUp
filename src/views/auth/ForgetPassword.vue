@@ -29,7 +29,7 @@ const onSubmit = handleSubmit(async (values) => {
 				</div>
 				<form @submit.prevent="onSubmit">
 					<BI
-						class="specialInput"
+						class="f-input"
 						type="email"
 						nom="email"
 						v-model="email"
@@ -74,14 +74,12 @@ const onSubmit = handleSubmit(async (values) => {
 				@include less($xsmS) {
 					@include zflex(column, nowrap, center, center);
 				}
-				.specialInput {
+				.f-input {
 					border-radius: 8px;
 					@include more($xsmS) {
 						height: 45px;
-						input {
-							border-bottom-right-radius: 0px;
-							border-top-right-radius: 0px;
-						}
+						border-bottom-right-radius: 0px;
+						border-top-right-radius: 0px;
 					}
 				}
 				button {

@@ -17,7 +17,7 @@ console.log(threads)
 					<routerLink :to="{ name: 'thread', params: { id: thread.$id } }">
 						{{ thread.title }}
 					</routerLink>
-					<p class="replies">{{ thread.posts.length }} replies</p>
+					<p class="replies">{{ thread.posts.length - 1}} replies</p>
 				</div>
 
 				<div class="madeBy noneSS">

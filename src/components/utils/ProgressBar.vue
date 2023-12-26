@@ -24,7 +24,7 @@ const updateProgress = () => {
 const complete = () => {
   setTimeout(() => {
     visible.value = false;
-  }, 300);
+  }, 100);
 };
 </script>
 <template>

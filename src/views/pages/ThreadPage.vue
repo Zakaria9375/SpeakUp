@@ -1,22 +1,23 @@
 <script setup>
-import PostList from '@/views/lists/PostList.vue'
 import PostCreate from '@/views/lists/PostCreate.vue'
 import { useDataStore } from '@/stores/DataStore'
 import { useToggle } from '@/composables/toggle.js'
 import { ref, computed } from 'vue'
 import PostCard from '@/views/lists/PostCard.vue'
+import { useAsyncState } from '@vueuse/core'
 const dataStore = useDataStore()
 const { id } = defineProps({
 	id: { required: true, type: String },
 })
 const { refValue, open, close } = useToggle()
-const { state: thread, isReady } = dataStore.getDoc('threads', id)
+const { state: thread } = getDoc('threads', id)
+
 const contributors = computed(() => {
 	const unique = new Set()
-	if (isReady) {
+	if (thread.value) {
 		thread.value.posts.forEach((p) => {
 			if (p && p.madeBy) {
-				unique.add(p.madeBy)
+				unique.add(p.madeBy.$id)
 			}
 		})
 	}
@@ -25,7 +26,7 @@ const contributors = computed(() => {
 </script>
 
 <template>
-	<div v-if="isReady" class="thread-page z-page">
+	<div v-if="thread" class="thread-page z-page">
 		<div class="container">
 			<div class="leading">
 				<router-link :to="{ name: 'editThread', params: { id: thread.$id } }" class="zbtn">
@@ -33,7 +34,7 @@ const contributors = computed(() => {
 				</router-link>
 
 				<span class="counts"
-					>{{ thread.posts?.length }} replies by {{ contributors }} contributors</span
+					>{{ thread.posts?.length - 1 }} replies by {{ contributors }} contributors</span
 				>
 			</div>
 			<div class="t-title">
@@ -53,7 +54,7 @@ const contributors = computed(() => {
 		</div>
 	</div>
 	<PopUp v-if="refValue" @close="close">
-		<PostCreate v-if="thread" :threadId="thread.$id" />
+		<PostCreate v-if="thread" :threadId="thread.$id" @post-added="close" />
 	</PopUp>
 </template>
 
@@ -67,7 +68,7 @@ const contributors = computed(() => {
 			width: fit-content;
 		}
 		span.counts {
-			padding: 16px 0;
+			padding: 12px 0;
 			@include zfont(1.125rem, 300, $gra2clr);
 		}
 	}
