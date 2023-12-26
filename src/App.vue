@@ -1,12 +1,19 @@
 <script setup>
-import MainHeader from './components/MainHeader.vue';
+import AppHeader from '@/components/header/AppHeader.vue'
+import AppFooter from '@/components/AppFooter.vue'
+// import BreadCrumbs from './components/utils/BreadCrumbs.vue'
 </script>
 
 <template>
-	<MainHeader/>
-	<div class="container">
+	<AppHeader />
+	<div class="view">
+		<!-- <BreadCrumbs /> -->
 		<router-view></router-view>
 	</div>
+	<AppFooter />
 </template>
 
-<style></style>
+<style lang="scss">
+.view {
+}
+</style>

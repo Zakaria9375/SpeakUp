@@ -1,0 +1,191 @@
+@use '@/assets/global.scss' as *;
+
+body {
+	font-family: 'Great Vibes', cursive;
+	font-family: 'Lilita One', sans-serif;
+	font-family: 'Roboto', sans-serif;
+}
+
+/* container */
+.z-page {
+	min-height: calc(100dvh - 134px);
+}
+.z-clr {
+	background-color: $web;
+}
+.ex-container {
+	max-width: 1370px;
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 16px;
+	padding-right: 16px;
+}
+.container {
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 16px;
+	padding-right: 16px;
+	box-sizing: border-box;
+	@media (max-width: 576px) {
+		max-width: 100%;
+	}
+	@media (min-width: 576px) {
+		width: 540px;
+	}
+	@media (min-width: 768px) {
+		width: 720px;
+	}
+	@media (min-width: 992px) {
+		width: 960px;
+	}
+	@media (min-width: 1200px) {
+		width: 1140px;
+	}
+	@media (min-width: 1400px) {
+		width: 1320px;
+	}
+}
+/* special heading */
+.sp-heading {
+	text-align: center;
+
+	h1 {
+		@include zfont(6rem, 800, #ebeced);
+		letter-spacing: -7px;
+		margin: 0;
+		@include less($smS) {
+			font-size: 4rem;
+			letter-spacing: -3px;
+		}
+	}
+	p {
+		margin: -20px 0 0;
+		@include zfont(1.35rem, 400, #5e5e5e);
+	}
+}
+
+.error-message {
+	color: $errclr;
+	margin-bottom: 10px;
+	text-align: center;
+}
+.link {
+	text-align: center;
+	text-decoration: none;
+	display: block;
+	&:hover {
+		color: lighten($color: $bluclr, $amount: 10%);
+	}
+}
+
+.avatar {
+	border-radius: 50%;
+	max-width: 100%;
+	width: 54px;
+	height: 54px;
+}
+
+.xavatar {
+	border-radius: 50%;
+	max-width: 100%;
+	width: 60px;
+	height: 60px;
+	margin-right: 8px;
+}
+
+.cardW {
+	margin: 16px 0;
+	padding: 16px;
+	background: #fff;
+	box-shadow:
+		rgba(0, 0, 0, 0.12) 0px 1px 3px,
+		rgba(0, 0, 0, 0.24) 0px 1px 2px;
+	border-radius: 8px;
+}
+
+.zbtn {
+	@include zbtn;
+	@include zfont(1.15rem, 500, #fff);
+}
+.nobtn {
+	border: none;
+	background: none;
+	cursor: pointer;
+}
+.blu-btn {
+	@include zbtn(#263959, 15px 36px);
+	@include zfont(1.15rem, 500, #fff);
+	text-transform: capitalize;
+}
+.form-act {
+	@include zflex(row, nowrap, flex-end, center);
+}
+.noneSS {
+	@include less($smS) {
+		display: none;
+	}
+}
+
+.noneMedS {
+	@include less($mS) {
+		display: none;
+	}
+}
+
+.noneLS {
+	@include less($lS) {
+		display: none;
+	}
+}
+
+.list-title {
+	background-color: $darkblue;
+	border-top-right-radius: 20px;
+	border-top-left-radius: 20px;
+	padding: 12px 20px;
+	margin: 0;
+	@include zfont(1.375rem, 400, #fff);
+	a {
+		@include zfont(1.375rem, 400, #fff);
+		letter-spacing: 0.5px;
+	}
+}
+
+.g-listing {
+	@include zflex(row, nowrap, space-between, center);
+	padding: 20px;
+	&:nth-child(even) {
+		background-color: #fff;
+	}
+	&:nth-child(odd) {
+		background-color: $webD;
+	}
+}
+
+.g-details {
+	a {
+		@include zfont(1.25rem, 500, $greclr);
+	}
+	p {
+		@include zfont(1.125rem, 300, $wdark);
+		margin: 8px 0 0;
+	}
+}
+
+h2.c {
+	text-align: center;
+	@include zfont(3rem, 700, $bdclr);
+	@include less($smS) {
+		font-size: 2.5rem;
+	}
+}
+
+.p-32 {
+	padding-top: 32px;
+	padding-bottom: 32px;
+}
+
+.p-48 {
+	padding-top: 48px;
+	padding-bottom: 48px;
+}

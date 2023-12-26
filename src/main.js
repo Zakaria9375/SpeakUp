@@ -1,30 +1,21 @@
-import './assets/main.css'
+import './assets/normalize.css'
+import './assets/main.scss'
 
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import AppDate from '@/components/utils/AppDate.vue';
-
+import BaseInput from '@/components/utils/BaseInput.vue'
+import BaseDate from '@/components/utils/BaseDate.vue'
+import PopUp from '@/components/utils/PopUp.vue'
+import BaseSpinner from '@/components/utils/BaseSpinner.vue'
 import App from './App.vue'
 import router from './router'
-import {firebaseApp}  from '@/config/firebase.js';
-import { VueFire, VueFireAuth } from 'vuefire'
-
-
-const vueApp = createApp(App)
+import { createPinia } from 'pinia'
 const pinia = createPinia()
 
-vueApp.use(pinia)
-vueApp.use(router)
-vueApp.component('AppDate', AppDate);
-vueApp.use(VueFire, {
-  firebaseApp,
-  modules: [
-    VueFireAuth(),
-  ],
-})
-vueApp.mount('#app')
-
-
-
-
-
+const app = createApp(App)
+app.use(pinia)
+app.use(router)
+app.component('BI', BaseInput)
+app.component('BaseDate', BaseDate)
+app.component('PopUp', PopUp)
+app.component('Spinner', BaseSpinner)
+app.mount('#app')

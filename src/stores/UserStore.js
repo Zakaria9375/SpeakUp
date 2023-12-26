@@ -1,42 +1,38 @@
 import { defineStore } from 'pinia'
-import { usePostStore } from '@/stores/PostStore';
-import { useThreadStore } from '@/stores/ThreadStore';
-
-export const useUserStore = defineStore('UserStore', {
-	state: () => ({ 
-		users: [],
-		authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3'
-	}),
-  getters: {
-		findById(state) {
-			return id => state.users.find(user => user.id === id)
-		},
-		authUser(state){
-			const user = this.findById(this.authId)
-			return {
-				...user,
-				get posts(){
-					return usePostStore().filterByUserId(state.authId)
-				},
-				get threads(){
-					return useThreadStore().filterByUserId(state.authId)
-				},
-				get postsCount(){
-					return this.posts.length
-				},
-				get threadsCount(){
-					return this.threads.length
-				}
-			}
-		},
-		
-  },
-	actions: {	
-		updateAuthUser(source){
-			const targetUser  = this.findById(this.authId)
-			Object.assign(targetUser, source)
-			console.log(targetUser)
-			this.users.push(targetUser)
-		}
+import { useAuthStore } from '@/stores/AuthStore.js'
+import { account, databases } from '@/config/AppWrite.js'
+import { ref } from 'vue'
+export const useUserStore = defineStore('userStore', () => {
+	const authId = ref('')
+	const authUser = ref({})
+	const userdb = ref({})
+	const appwriteErr = ref('')
+	function displayErr(error) {
+		console.log(error)
+		appwriteErr.value = `${error}`
 	}
+	function getAuthUser() {
+			const promise = account.get()
+			promise.then(
+				function (response) {
+					authUser.value = response
+					authId.value = response.$id
+					const promisedb = databases.getDocument('appData', 'users', response.$id)
+					promisedb.then(
+						function (res) {
+							userdb.value = res
+						},
+						function (error) {
+							displayErr(error)
+						}
+					)
+					console.log(response) // Success
+				},
+				function (error) {
+					displayErr(error)
+				}
+			)
+		
+	}
+	return { authId, authUser, userdb, getAuthUser }
 })
