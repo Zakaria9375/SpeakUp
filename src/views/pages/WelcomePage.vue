@@ -24,24 +24,24 @@ const whatToExpect = [
 ]
 const faqs = [
 	{
-		question: 'Can Workvivo integrate with the tools we already use?',
+		question: 'What is Speak-up and how does it work?',
 		answer:
-			'Yes, Workvivo is designed to integrate seamlessly with a wide variety of tools your team may already use. This includes livestreaming platforms (like Zoom and Microsoft Teams), productivity suites (such as Atlassian’s Confluence & Jira), HR systems, single sign-on solutions, social channels, content management systems, video communications, document management systems, team collaboration tools like MS Teams and Slack, and more. Workvivo serves as a central hub for your digital workplace, streamlining communication and engagement within your organization.',
+			'Speak-up is a communication platform designed to facilitate online discussions and collaboration. It organizes content into categories, each containing forums. Within these forums, users can create threads on specific topics, and each thread comprises individual posts where users can share information, ask questions, and interact with others.',
 	},
 	{
-		question: 'Can Workvivo integrate with the tools we already use?',
+		question: 'How do I create a new thread in a forum?',
 		answer:
-			'Yes, Workvivo is designed to integrate seamlessly with a wide variety of tools your team may already use. This includes livestreaming platforms (like Zoom and Microsoft Teams), productivity suites (such as Atlassian’s Confluence & Jira), HR systems, single sign-on solutions, social channels, content management systems, video communications, document management systems, team collaboration tools like MS Teams and Slack, and more. Workvivo serves as a central hub for your digital workplace, streamlining communication and engagement within your organization.',
+			'To create a new thread, first navigate to the category that best fits your topic. Then, select the forum where you want to start your thread. Click on the Create Thread button, enter a title and your message, and then submit it. Your thread will now be open for others to view and respond to with their posts.',
 	},
 	{
-		question: 'How does Workvivo handle security and data?',
+		question: 'How does Speak-up handle security and data?',
 		answer:
-			'At Workvivo, we take security seriously, which is why we are proud to be ISO 27001 certified. This certification demonstrates our commitment to maintaining the highest highest level of security and protection. In addition to the ISO 27001 certification, we also generate an annual SOC 2 Type 2 report. This report provides independent assurance that our controls are designed and operating effectively to meet the Trust Services Criteria for security, availability, processing integrity, confidentiality, and privacy.',
+			'Speak-up prioritizes the security and privacy of user data. To achieve this, we utilize Appwrite, a robust open-source backend server, known for its comprehensive security features. Appwrite includes end-to-end encryption, ensuring that all data, both in transit and at rest, is securely encrypted. Additionally, Appwrite follows strict authentication and authorization protocols to control access to data, preventing unauthorized access.',
 	},
 	{
 		question: 'How does the pricing work?',
 		answer:
-			'We have different pricing plans and supercharged add-ons for you to choose from. The price of your platform will depend on how many licenses you require and your organization’s specific needs. Please request a custom quote here. ',
+			'Speak-up is completely free to use. As an open-source platform, we are committed to providing a cost-free communication tool that is accessible to everyone. Users can create and join forums, threads, and posts without any charges. Our open-source nature also means that enthusiastic developers and users can contribute to the app development, ensuring continuous improvement and innovation without any cost.',
 	},
 ]
 const activeIndex = ref(-1)

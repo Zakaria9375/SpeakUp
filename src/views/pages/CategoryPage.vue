@@ -1,16 +1,24 @@
 <script setup>
-import ForumList from '@/views/lists/ForumList.vue'
-import { useDataStore } from '@/stores/DataStore'
+import ForumList from '@/components/ForumList.vue'
+import { useCategoryStore } from '@/stores/CategoryStore'
+import { computed } from 'vue'
 
-const dataStore = useDataStore()
+const CategoryStore = useCategoryStore()
 const { id } = defineProps({
 	id: { required: true, type: String },
 })
-const { state: category, isReady } = dataStore.getDoc('categories', id)
+const category = computed(() => {
+	if (CategoryStore.categories) {
+		return CategoryStore.categories.find((c) => c.$id === id)
+	} else {
+		CategoryStore.getCategories()
+		return CategoryStore.categories.find((c) => c.$id === id)
+	}
+})
 </script>
 
 <template>
-	<div v-if="isReady" class="category-page z-page z-clr p-32">
+	<div class="category-page z-page z-clr p-32">
 		<div class="container">
 			<div class="c-details">
 				<h1>{{ category.name }}</h1>

@@ -2,15 +2,15 @@
 import { computed } from 'vue'
 import { useToggle } from '@/composables/toggle'
 import { useAuthStore } from '@/stores/AuthStore'
-import { useUserStore } from '@/stores/UserStore'
+import { useAccDbStore } from '@/stores/AccDbStore'
 import { vOnClickOutside } from '@vueuse/components'
 const authStore = useAuthStore()
-const userStore = useUserStore()
+const accDbStore = useAccDbStore()
 const { refValue: userDD, toggle: toggleUserDD, close: closeUserDD } = useToggle()
 const { refValue: nots, toggle: toggleN, close: closeN } = useToggle()
-userStore.getAuthUser()
+accDbStore.getAccUser()
 const user = computed(() => {
-	return userStore.userdb
+	return accDbStore.dbUser
 })
 </script>
 
@@ -37,13 +37,13 @@ const user = computed(() => {
 					<span>{{ user.fullName }}</span>
 				</div>
 				<li>
-					<RouterLink :to="{ name: 'myprofile' }">
+					<RouterLink :to="{ name: 'profile', params: {id: user.$id} }">
 						<div class="icon"><i class="fa-solid fa-user"></i></div>
 						profile</RouterLink
 					>
 				</li>
 				<li>
-					<RouterLink :to="{ name: 'myprofile' }">
+					<RouterLink :to="{ name: 'account' }">
 						<div class="icon"><i class="fa-solid fa-gear"></i></div>
 						account</RouterLink
 					>
@@ -55,7 +55,7 @@ const user = computed(() => {
 					>
 				</li>
 				<li>
-					<button type="button" @click="authStore.logout()">
+					<button type="button" @click="authStore.logout(user.$id)">
 						<div class="icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
 						log out
 					</button>

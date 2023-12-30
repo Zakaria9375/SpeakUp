@@ -1,19 +1,25 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/AuthStore.js'
 import { loginSchema } from '@/validations/schemas.js'
 import { useForm } from 'vee-validate'
+import { useRouter } from 'vue-router';
 
 const { meta, defineField, handleSubmit, errors } = useForm({ validationSchema: loginSchema })
 
 const authStore = useAuthStore()
-const outputErr = computed(() => authStore.appwriteErr)
+const outputErr = computed(() => authStore.loginErr)
 
 const [email, emailAttrs] = defineField('email')
 const [password, passwordAttrs] = defineField('password')
-
+const router = useRouter()
 const onSubmit = handleSubmit((values) => {
 	authStore.login(values)
+})
+onMounted(() => {
+	if(authStore.loggedIn) {
+		router.push({name: 'home'})
+	}
 })
 </script>
 

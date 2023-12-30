@@ -1,9 +1,12 @@
 <template>
-	<div>
+	<div class="z-page z-clr loader-page">
 		<span class="loader">Load&nbsp;ng</span>
 	</div>
 </template>
 <style lang="scss">
+.loader-page {
+	@include zflex
+}
 	.loader {
   color: #FFF;
   position: relative;

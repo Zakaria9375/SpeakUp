@@ -1,7 +1,7 @@
 <script setup>
-import { useDataStore } from '@/stores/DataStore'
-import PostEditor from '@/views/lists/PostEditor.vue'
-const dataStore = useDataStore()
+import { usePostStore } from '@/stores/PostStore'
+import PostEditor from '@/components/posts/PostEditor.vue'
+const PostStore = usePostStore()
 const emit = defineEmits(['post-added'])
 const props = defineProps({
 	threadId: { type: String, required: true },
@@ -11,7 +11,7 @@ function addPost(payload) {
 		...payload,
 		thread: props.threadId,
 	}
-	dataStore.createPost(post)
+	PostStore.createPost(post)
 	emit("post-added")
 }
 </script>

@@ -1,15 +1,14 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { useUserStore } from '@/stores/UserStore'
+import { useAccDbStore } from '@/stores/AccDbStore'
 import ProfileCard from '@/views/auth/ProfileCard.vue'
 import ProfileEdit from '@/views/auth/ProfileEdit.vue'
-import PostList from '@/views/lists/PostList.vue'
-const userStore = useUserStore()
-userStore.getAuthUser()
+
+const AccDbStore = useAccDbStore()
+AccDbStore.getAuthUser()
+const user = computed(() => AccDbStore.dbUser)
 
 const editing = ref(false)
-
-const userdb = computed(() => userStore.userdb)
 
 function goToEdit() {
 	window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -19,23 +18,23 @@ function goToEdit() {
 
 <template>
 	<div>
-		<div class="profile-page">
+		<div class="profile-page z-page">
 			<div class="main-profile cardW">
-				<ProfileCard v-if="!editing" :user="userdb" />
-				<ProfileEdit v-if="editing" :user="userdb" @cancel="goToEdit" />
+				<ProfileCard v-if="!editing" :user="user" />
+				<ProfileEdit v-if="editing" :user="user" @cancel="goToEdit" />
 				<div class="member">
 					<p>
 						<span class="lead">Member since:</span>
 						<BaseDate
-							v-if="userdb.registeredAt"
+							v-if="user.registeredAt"
 							:act="true"
-							:isoTimestamp="userdb.registeredAt"
+							:isoTimestamp="user.registeredAt"
 							forma="ll"
 						/>
 					</p>
 					<p>
 						<span class="lead">Last visit at:</span>
-						<BaseDate v-if="userdb.lastVisitAt" :isoTimestamp="userdb.lastVisitAt" />
+						<BaseDate v-if="user.lastVisitAt" :isoTimestamp="user.lastVisitAt" />
 					</p>
 				</div>
 
@@ -48,7 +47,7 @@ function goToEdit() {
 					<p>See only <span>threads</span> <span>posts</span> or <span>all</span></p>
 				</div>
 				<div class="activity-list">
-					<!-- <PostList v-if="userdb.posts" :posts="userdb.posts" /> -->
+					<!-- <PostList v-if="user.posts" :posts="user.posts" /> -->
 				</div>
 			</div>
 		</div>

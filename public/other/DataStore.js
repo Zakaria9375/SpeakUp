@@ -40,24 +40,7 @@ export const useDataStore = defineStore('dataStore', () => {
 		)
 		return { state, isReady, isLoading, error }
 	}
-	function getDocSub(colId, docID) {
-		const unsubscribe = client.subscribe(`databases.appData.collections.${colId}.documents.${docID}`, (response) => {
-				console.log(response)
-				return response.payload
-			})
-		const {state, isReady, isLoading, error} = useAsyncState(
-			unsubscribe()
-			,
-			null,
-			{
-				onError: (e) => {
-					displayErr(e)
-				},
-			}
-		)
-		unsubscribe()
-		return { state, isReady, isLoading, error }
-	}
+	
 	function lastThread(id) {
 		const { state, isReady, isLoading, error } = useAsyncState(
 			databases
@@ -155,7 +138,6 @@ export const useDataStore = defineStore('dataStore', () => {
 		getCollection,
 		getCategories,
 		getDoc,
-		getDocSub,
 		createThread,
 		updateThreadPost,
 		createPost,

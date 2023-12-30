@@ -5,7 +5,6 @@ const { threads } = defineProps({
 		required: true,
 	},
 })
-console.log(threads)
 </script>
 
 <template>
@@ -17,7 +16,7 @@ console.log(threads)
 					<routerLink :to="{ name: 'thread', params: { id: thread.$id } }">
 						{{ thread.title }}
 					</routerLink>
-					<p class="replies">{{ thread.posts.length - 1}} replies</p>
+					<p class="replies">{{ thread.posts.length}} replies</p>
 				</div>
 
 				<div class="madeBy noneSS">

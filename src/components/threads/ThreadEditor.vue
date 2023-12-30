@@ -11,7 +11,7 @@ const form = ref({
 	content: props.content,
 })
 function save() {
-	emit('save', { ...form })
+	emit('save',  form.value )
 }
 function cancel() {
 	emit('cancel')

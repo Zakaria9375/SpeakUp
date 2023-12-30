@@ -1,5 +1,5 @@
 <script setup>
-import LastThread from '@/views/lists/LastThread.vue'
+import LastThread from '@/components/threads/LastThread.vue'
 const { forums, title, categoryId } = defineProps({
 	forums: {
 		type: Array,
@@ -43,7 +43,7 @@ const { forums, title, categoryId } = defineProps({
 							: 'no-threads'
 					}}
 				</div>
-				<LastThread class="noneMedS" :id="forum.$id" />
+				<LastThread v-if="forum.threads" class="noneMedS" :id="forum.$id" />
 			</div>
 		</div>
 	</div>

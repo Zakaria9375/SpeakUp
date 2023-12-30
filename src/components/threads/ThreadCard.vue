@@ -1,38 +1,33 @@
 <script setup>
-import { useUserStore } from '@/stores/UserStore'
-import { useToggle } from '@/composables/toggle.js'
-import PostUpdate from '@/views/lists/PostUpdate.vue';
-
-const authId = useUserStore().authId
-const { post } = defineProps({ post: { type: Object, required: true } })
-const { refValue, open, close } = useToggle()
+const { thread } = defineProps({
+	thread: { type: Object, required: true },
+	onlineDisplay: { required: false, type: Boolean, default: true },
+})
 </script>
 <template>
-	<div class="post">
-		<div class="post-detail">
-			<div class="u-info">
-				<router-link :to="{ name: 'profile', params: { id: post.madeBy?.$id } }" class="user">
-					<img class="xxavatar" :src="post.madeBy?.avatar" alt="post.madeBy.username" />
-					<div class="user-n">{{ post.madeBy?.fullName }}</div>
-				</router-link>
-			</div>
-			<p class="p-content">{{ post.content }}</p>
+	<div class="all">
+		<div class="t-title">
+			<h1 class="list-title">{{ thread.title }}</h1>
 		</div>
-		<button
-			v-if="authId === post.madeBy?.$id"
-			class="editA nobtn"
-			@click="open"
-			title="Make a change"
-		>
-			<i class="fa fa-pencil"></i>
-		</button>
-		<div class="date">
-			<BaseDate :isoTimestamp="post.$createdAt" />
+		<div class="post firstPostStyle">
+			<div class="post-detail">
+				<div class="u-info">
+					<router-link :to="{ name: 'profile', params: { id: thread.madeBy?.$id } }" class="user">
+						<img class="xxavatar" :src="thread.madeBy?.avatar" alt="post.madeBy.username" />
+						<div class="user-n">
+							<span v-if="thread.madeBy?.isActive && onlineDisplay" class="online"
+								><img class="online" src="/static/online.png" alt="online" /></span
+							>{{ thread.madeBy?.fullName }}
+						</div>
+					</router-link>
+				</div>
+				<p class="p-content">{{ thread.content }}</p>
+			</div>
+			<div class="date">
+				<BaseDate :isoTimestamp="thread.$createdAt" />
+			</div>
 		</div>
 	</div>
-	<PopUp v-if="refValue" @close="close">
-		<PostUpdate v-if="post" :post="post" @post-updated="close"/>
-	</PopUp>
 </template>
 <style lang="scss">
 .post {
@@ -61,6 +56,7 @@ const { refValue, open, close } = useToggle()
 				}
 			}
 			.p-content {
+				position: relative;
 				flex: 1;
 				padding: 16px 40px 40px 16px;
 				@include zfont(1.125rem, 400, $dark);
@@ -69,11 +65,21 @@ const { refValue, open, close } = useToggle()
 				text-align: justify;
 			}
 		}
-		.editA {
+		.edit-btns {
+			@include zflex;
+			flex-direction: column;
 			position: absolute;
 			right: 0;
-			top: 0;
+			top: 35px;
+			background-color: $web;
+			border-top-left-radius: 6px;
+			border-bottom-left-radius: 6px;
+
+			border: 0.5px solid $web;
 			padding: 10px;
+			.editA:first-child {
+				margin-bottom: 15px;
+			}
 			i {
 				color: $bluclr;
 			}
@@ -111,11 +117,17 @@ const { refValue, open, close } = useToggle()
 				text-align: justify;
 			}
 		}
-		.editA {
+		.edit-btns {
+			@include zflex;
+
+			gap: 10px;
 			position: absolute;
 			right: 5px;
 			top: 10px;
 			padding: 10px;
+			i {
+				color: $bluclr;
+			}
 		}
 		.date {
 			position: absolute;
@@ -124,5 +136,9 @@ const { refValue, open, close } = useToggle()
 			padding: 10px;
 		}
 	}
+}
+
+.firstPostStyle {
+	border: 1px solid #000;
 }
 </style>

@@ -1,19 +1,17 @@
 <script setup>
-import { useDataStore } from '@/stores/DataStore'
-import PostEditor from '@/views/lists/PostEditor.vue'
-const dataStore = useDataStore()
+import { usePostStore } from '@/stores/PostStore'
+import PostEditor from '@/components/posts/PostEditor.vue'
+const PostStore = usePostStore()
 const emit = defineEmits(['post-updated'])
-const props = defineProps({
+const {post} = defineProps({
 	post: { type: Object, required: true },
 })
 function updatePost(payload) {
-	const postId = props.post.$id
+	const postId = post.$id
 	const newPost = {
 		...payload,
-		thread: props.post.thread,
-		madeBy: props.post.madeBy,
 	}
-	dataStore.updatePost(postId, newPost)
+	PostStore.updatePost(postId, newPost)
 	emit("post-updated")
 }
 </script>

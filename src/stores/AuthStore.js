@@ -1,73 +1,45 @@
 import { defineStore } from 'pinia'
-import { account, databases } from '@/config/AppWrite.js'
+import { account, updateUserStatus } from '@/config/AppWrite.js'
 import { useLocalStorage } from '@vueuse/core'
 import { ref } from 'vue'
-import { ID } from 'appwrite'
 import router from '@/router'
+import { executeOperation } from '@/stores/helper'
+import { useAccDbStore } from '@/stores/AccDbStore'
 export const useAuthStore = defineStore('AuthStore', () => {
-	const appwriteErr = ref('')
+	const loginErr = ref('')
 	const loggedIn = useLocalStorage('loggedIn', false)
-	function displayErr(error) {
-		console.log(error)
-		appwriteErr.value = `${error}`
-	}
-	function updateLastLoginTime(response) {
-		let id = response.userId
-		let lastLoginTime = new Date().toISOString()
-		databases.updateDocument('appData', 'users', id, {
-			lastVisitAt: lastLoginTime,
-		})
-	}
+	// function updateLastLoginTime(response) {
+	// 	let id = response.userId
+	// 	let lastLoginTime = new Date().toISOString()
+	// 	databases.updateDocument('appData', 'users', id, {
+	// 		lastVisitAt: lastLoginTime,
+	// 	})
+	// }
 	function login(data) {
-		const promise = account.createEmailSession(data.email, data.password)
-		promise.then(
-			function (response) {
+		const operation = account.createEmailSession(data.email, data.password)
+		return executeOperation(operation, 'Login Successful', 'Login Failed').then(
+			(res) => {
+				updateUserStatus(res.userId, true)
 				loggedIn.value = true
-				updateLastLoginTime(response)
+				useAccDbStore().getAccUser()
 				router.push({ name: 'home' })
-			},
-			function (error) {
-				displayErr(error)
-			}
+			}, (err) => loginErr.value = err
 		)
 	}
-	function logout() {
-		const promise = account.deleteSession('current')
-		promise.then(
-			function (response) {
+	function logout(id) {
+		const operation = account.deleteSession('current')
+		return executeOperation(operation, 'Logout Successful', 'Logout Failed').then(
+			(res) => {
+				updateUserStatus(id, false)
 				loggedIn.value = false
-			},
-			function (error) {
-				displayErr(error)
+				router.push({ name: 'welcome' })
 			}
 		)
 	}
-	function createNewUser(data) {
-		const promise = account.create(ID.unique(), data.email, data.password, data.fullName)
-		promise.then(
-			function (response) {
-				const theUser = {
-					fullName: data.fullName,
-					username: data.userName,
-					email: data.email,
-					firstName: data.firstName,
-					lastName: data.lastName,
-					registeredAt: response.$createdAt,
-				}
-				databases.createDocument('appData', 'users', response.$id, {
-					...theUser,
-				})
-				router.push({ name: 'login' })
-			},
-			function (error) {
-				displayErr(error)
-			}
-		)
-	}
+	
 	return {
 		loggedIn,
-		appwriteErr,
-		createNewUser,
+		loginErr,
 		login,
 		logout,
 	}

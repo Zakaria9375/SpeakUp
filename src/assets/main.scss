@@ -134,10 +134,16 @@ body {
 
 .noneLS {
 	@include less($lS) {
-		display: none;
+		display: none !important;
 	}
 }
-
+.t-title {
+	@include zflex;
+	h1 {
+		text-align: center;
+		width: fit-content;
+	}
+}
 .list-title {
 	background-color: $darkblue;
 	border-top-right-radius: 20px;
@@ -180,6 +186,9 @@ h2.tito {
 	}
 }
 
+.pb-16 {
+	padding-bottom: 16px;
+}
 .p-32 {
 	padding-top: 32px;
 	padding-bottom: 32px;
@@ -188,4 +197,20 @@ h2.tito {
 .p-48 {
 	padding-top: 48px;
 	padding-bottom: 48px;
+}
+
+.del-main {
+	.bg {
+		max-width: $smS !important;
+	}
+}
+
+img.online {
+	max-width: 100%;
+	width: 14px;
+	height: 14px;
+}
+
+span.online {
+	padding: 0 4px;
 }

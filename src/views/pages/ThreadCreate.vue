@@ -1,27 +1,30 @@
 <script setup>
-import { computed } from 'vue'
-import { useUserStore } from '@/stores/UserStore'
+import { computed, ref } from 'vue'
+import { useAccDbStore } from '@/stores/AccDbStore'
 import { useRouter } from 'vue-router'
-import { useDataStore } from '@/stores/DataStore'
-import ThreadEditor from '@/views/lists/ThreadEditor.vue'
-
-const dataStore = useDataStore()
-const userStore = useUserStore()
+import { useThreadStore } from '@/stores/ThreadStore'
+import { useForumStore } from '@/stores/ForumStore'
+import ThreadEditor from '@/components/threads/ThreadEditor.vue'
 const router = useRouter()
+const ThreadStore = useThreadStore()
+
 const { id } = defineProps({
 	id: { type: String, required: true },
 })
-const authUser = computed(() => userStore.authUser)
-const { state: forum } = dataStore.getDoc('forums', id)
 
-function save(data) {
+const dbUser = computed(() => useAccDbStore().dbUser)
+const forum = ref(null)
+useForumStore().getForum(forum, id)
+
+async function save(data) {
 	const thread = {
 		forum: id,
 		title: data.title,
-		posts: [{ content: data.content, madeBy: authUser.value.$id }],
-		madeBy: authUser.value.$id,
+		content: data.content,
+		madeBy: dbUser.value.$id,
 	}
-	dataStore.createThread(thread)
+	await ThreadStore.createThread(thread)
+	router.push({ name: 'forum', params: { id: id } })
 }
 
 function cancel() {
@@ -30,7 +33,7 @@ function cancel() {
 </script>
 
 <template>
-	<div class="newthread-page z-clr z-page p-48">
+	<div v-if="forum" class="newthread-page z-clr z-page p-48">
 		<div class="container">
 			<div class="heading">
 				<h1>{{ forum.name }}</h1>

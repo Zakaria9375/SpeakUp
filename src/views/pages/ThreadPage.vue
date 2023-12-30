@@ -1,16 +1,25 @@
 <script setup>
-import PostCreate from '@/views/lists/PostCreate.vue'
-import { useDataStore } from '@/stores/DataStore'
+import { onUnmounted, computed, ref } from 'vue'
+import { useThreadStore } from '@/stores/ThreadStore'
+import { useAccDbStore } from '@/stores/AccDbStore'
+import { client } from '@/config/AppWrite.js'
 import { useToggle } from '@/composables/toggle.js'
-import { ref, computed } from 'vue'
-import PostCard from '@/views/lists/PostCard.vue'
-import { useAsyncState } from '@vueuse/core'
-const dataStore = useDataStore()
+
+import PostCreate from '@/components/posts/PostCreate.vue'
+import ThreadDelete from '@/components/threads/ThreadDelete.vue'
+import PostCard from '@/components/posts/PostCard.vue'
+import ThreadCard from '@/components/threads/ThreadCard.vue'
+
+const ThreadStore = useThreadStore()
+const authId = useAccDbStore().authId
+
 const { id } = defineProps({
 	id: { required: true, type: String },
 })
 const { refValue, open, close } = useToggle()
-const { state: thread } = getDoc('threads', id)
+const { refValue: del, open: openDel, close: closeDel } = useToggle()
+const thread = ref(null)
+ThreadStore.getThread(thread, id)
 
 const contributors = computed(() => {
 	const unique = new Set()
@@ -23,29 +32,40 @@ const contributors = computed(() => {
 	}
 	return unique.size
 })
+
+const unsub = client.subscribe(
+	[
+		'databases.appData.collections.posts.documents',
+		`databases.appData.collections.threads.documents.${id}`,
+	],
+	(response) => {
+		ThreadStore.getThread(thread, id)
+		console.log('sub msg from thread page', response)
+	}
+)
+
+onUnmounted(() => unsub())
 </script>
 
 <template>
 	<div v-if="thread" class="thread-page z-page">
 		<div class="container">
 			<div class="leading">
-				<router-link :to="{ name: 'editThread', params: { id: thread.$id } }" class="zbtn">
-					Edit thread
-				</router-link>
+				<div v-if="authId === thread.madeBy.$id" class="form-act">
+					<button @click="openDel" type="button" class="gh-btn">Delete thread</button>
+					<router-link :to="{ name: 'editThread', params: { id: thread.$id } }" class="zbtn">
+						Edit thread
+					</router-link>
+				</div>
 
 				<span class="counts"
-					>{{ thread.posts?.length - 1 }} replies by {{ contributors }} contributors</span
+					>{{ thread.posts?.length}} replies by {{ contributors }} contributors</span
 				>
 			</div>
-			<div class="t-title">
-				<h1 class="list-title">{{ thread.title }}</h1>
-			</div>
-			<!-- <PostList v-if="thread.posts" :posts="thread.posts" /> -->
+			<ThreadCard :thread="thread" />
 			<div class="post-list">
-				<div v-for="(post, index) in thread.posts" :key="post.$id">
-					<div :class="{ 'first-post': index === 0 }">
-						<PostCard :post="post" />
-					</div>
+				<div v-for="post in thread.posts" :key="post.$id">
+					<PostCard :post="post" />
 				</div>
 			</div>
 			<div class="form-act">
@@ -54,7 +74,16 @@ const contributors = computed(() => {
 		</div>
 	</div>
 	<PopUp v-if="refValue" @close="close">
-		<PostCreate v-if="thread" :threadId="thread.$id" @post-added="close" />
+		<PostCreate v-if="thread" :threadId="thread.$id" @post-added="close"/>
+	</PopUp>
+	<PopUp class="del-main" v-if="del" @close="closeDel">
+		<ThreadDelete
+			v-if="thread"
+			:id="thread.$id"
+			:forumId="thread.forum.$id"
+			@thread-deleted="closeDel"
+			@cancel="closeDel"
+		/>
 	</PopUp>
 </template>
 
@@ -64,26 +93,17 @@ const contributors = computed(() => {
 	padding-bottom: 54px;
 	.leading {
 		@include zflex(column, wrap, center, flex-end);
+		.gh-btn {
+			@include zfont(1.125rem, 400, #000);
+			@include zbtn(#adaaaa, 10px 22px);
+			margin-right: 12px;
+		}
 		.zbtn {
 			width: fit-content;
 		}
 		span.counts {
 			padding: 12px 0;
 			@include zfont(1.125rem, 300, $gra2clr);
-		}
-	}
-	.t-title {
-		@include zflex;
-		h1 {
-			text-align: center;
-			width: fit-content;
-		}
-	}
-	.post-list {
-		.first-post {
-			.post {
-				border: 1px solid #000;
-			}
 		}
 	}
 }

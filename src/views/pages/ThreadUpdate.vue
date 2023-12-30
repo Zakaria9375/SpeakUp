@@ -1,58 +1,49 @@
 <script setup>
-import { watchEffect, ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDataStore } from '@/stores/DataStore'
-import ThreadEditor from '@/views/lists/ThreadEditor.vue';
+import { useThreadStore } from '@/stores/ThreadStore'
+import ThreadEditor from '@/components/threads/ThreadEditor.vue'
+
 const router = useRouter()
-const dataStore = useDataStore()
+const ThreadStore = useThreadStore()
+
 const { id } = defineProps({
 	id: { type: String, required: true },
 })
-const loading = ref(false)
-const { state: thread, isReady } = dataStore.getDoc('threads', id)
-const firstPost = computed(() => {
-	if (isReady && thread.value) {
-		return thread.value.posts[0]
-	}
-})
-const postsIds = computed(() => {
-	if (isReady && thread.value) {
-		return thread.value.posts.map((p) => p.$id).slice(1)
-	}
-})
 
-function save(data) {
-	const threadId = thread.value.$id
-	const postId = firstPost.value.$id
-	const updatedPost = {
-		thread: threadId,
-		madeBy: firstPost.value.madeBy,
-		content: data.content,
+const thread = ref(null)
+ThreadStore.getThread(thread, id)
+
+async function save(data) {
+	try {
+		const threadId = thread.value.$id
+		const updatedThread = {
+			title: data.title,
+			content: data.content,
+		}
+		await ThreadStore.updateThread(threadId, updatedThread)
+		router.push({ name: 'thread', params: { id: threadId } })
+	} catch (error) {
+		console.error('Error saving data:', error)
+		// Handle error (e.g., show notification to the user)
 	}
-	const updatedThread = {
-		forum: thread.value.forum,
-		title: data.title,
-		posts: postsIds.value,
-		madeBy: thread.value.madeBy,
-	}
-	dataStore.updateThreadPost(loading, postId, updatedPost, threadId, updatedThread)
 }
+
 function cancel() {
 	router.push({ name: 'thread', params: { id: id } })
 }
 </script>
 
 <template>
-	<div v-if="isReady && !loading" class="updateThread-page z-clr z-page p-48">
+	<div class="updateThread-page z-clr z-page p-48">
 		<div v-if="thread" class="container">
 			<div class="heading">
 				<h1>{{ thread.title }}</h1>
 				<h2>Update your thread</h2>
 			</div>
 			<ThreadEditor
-				v-if="firstPost"
 				:title="thread.title"
-				:content="firstPost.content"
+				:content="thread.content"
 				btn-submit="Update"
 				@save="save"
 				@cancel="cancel"

@@ -1,34 +1,29 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useUserStore } from '@/stores/UserStore'
-const userStore = useUserStore()
-const userdb = computed(() => userStore.userdb)
+import { useAccDbStore } from '@/stores/AccDbStore'
+const AccDbStore = useAccDbStore()
+const user = computed(() => AccDbStore.dbUser)
 
-const emit = defineEmits(['save', 'cancel'])
+const emit = defineEmits(['save'])
 const props = defineProps({
 	content: { type: String, default: '' },
 	btnSubmit: { type: String, default: 'add' },
-	btnCancel: { type: Boolean, default: false },
 })
 
 const content = ref(props.content)
 function save() {
 	const post = {
 		content: content.value,
-		madeBy: userdb.value.$id,
 	}
 	emit('save', post)
-}
-function cancel() {
-	emit('cancel')
 }
 </script>
 <template>
 	<div class="post-editor">
 		<div class="u-info">
-			<router-link :to="{ name: 'myprofile' }" class="user">
-				<img class="xavatar" :src="userdb.avatar" alt="post.madeBy.username" />
-				<div class="user-name">{{ userdb.fullName }}</div>
+			<router-link :to="{ name: 'profile', params: { id: user.$id } }" class="user">
+				<img class="xavatar" :src="user.avatar" alt="post.madeBy.username" />
+				<div class="user-name">{{ user.fullName }}</div>
 			</router-link>
 		</div>
 		<form @submit.prevent="save">
@@ -41,7 +36,6 @@ function cancel() {
 				v-model="content"
 			></BI>
 			<div class="form-act">
-				<button v-if="btnCancel" @click="cancel" type="button" class="gh-btn">Cancel</button>
 				<button class="blu-btn" type="submit">{{ btnSubmit }}</button>
 			</div>
 		</form>
@@ -66,21 +60,6 @@ function cancel() {
 			border-radius: 12px;
 			@include zfont(1.125rem, 400, $dark);
 			padding: 16px;
-		}
-		.form-act {
-			.gh-btn {
-				@include zfont(1.125rem, 400, #000);
-				margin-right: 12px;
-				background: none;
-				border: none;
-				padding: 15px 36px;
-				border-radius: 8px;
-				&:hover {
-					background-color: #adaaaa;
-					color: #fff;
-					cursor: pointer;
-				}
-			}
 		}
 	}
 }

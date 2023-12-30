@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useAuthStore } from '@/stores/AuthStore.js'
+import { useAccDbStore } from '@/stores/AccDbStore.js'
 import { registerSchema } from '@/validations/schemas.js'
 import { useForm } from 'vee-validate'
 
@@ -8,12 +8,14 @@ const { defineField, handleSubmit, errors, validate } = useForm({
 	validationSchema: registerSchema,
 })
 
-const authStore = useAuthStore()
+const AccDbStore = useAccDbStore()
 const [firstName, firstNameAttrs] = defineField('firstName')
 const [lastName, lastNameAttrs] = defineField('lastName')
 const [email, emailAttrs] = defineField('email')
 const [password, passwordAttrs] = defineField('password')
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword')
+const outputErr = computed(() => AccDbStore.registerErr)
+
 const theFullName = computed(() => {
 	return firstName.value.trim() + ' ' + lastName.value.trim()
 })
@@ -35,9 +37,9 @@ const onSubmit = handleSubmit(async (values) => {
 			fullName,
 			...values,
 		}
-		authStore.createNewUser(data)
+		AccDbStore.createAccUser(data)
 	}
-}) //
+})
 </script>
 
 <template>
@@ -91,6 +93,7 @@ const onSubmit = handleSubmit(async (values) => {
 					/>
 					<button type="submit" class="signup">Sign Up</button>
 				</form>
+				<div class="error-message" v-if="outputErr">{{ outputErr }}</div>
 				<p class="sign-link">
 					Already have an account?
 					<router-link to="/login" title="Do you have an account?!" class="link"

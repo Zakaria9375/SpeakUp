@@ -1,24 +1,38 @@
 <script setup>
 import { useAuthStore } from '@/stores/AuthStore'
 import SignedUser from '@/components/header/SignedUser.vue'
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+const route = useRoute()
 const authStore = useAuthStore()
+const isWelcomePage = computed(() => {
+	return route.path === '/' && authStore.loggedIn
+})
+const logoLink = computed(() => {
+	return authStore.loggedIn ? '/home' : '/'
+})
 </script>
 
 <template>
 	<div>
 		<header>
 			<nav class="container">
-				<RouterLink to="/" class="logo-wrap" >
+				<RouterLink :to="logoLink" class="logo-wrap">
 					<div class="logo">
 						<img src="/static/svg/logo.svg" alt="website logo" />
 						<span>Speak up</span>
 					</div>
 				</RouterLink>
-				<SignedUser v-if="authStore.loggedIn" />
-				<div v-else class="sign">
-					<router-link :to="{ name: 'login' }" class="sign-in">Sign in</router-link>
-					<router-link :to="{ name: 'register' }" class="sign-up">Sign up</router-link>
-				</div>
+				<section class="reg-tools">
+					<SignedUser v-if="authStore.loggedIn" />
+					<div v-else class="sign">
+						<router-link :to="{ name: 'login' }" class="sign-in">Sign in</router-link>
+						<router-link :to="{ name: 'register' }" class="sign-up">Sign up</router-link>
+					</div>
+					<router-link v-if="isWelcomePage" :to="{ name: 'home' }" class="or-btn"
+						>Go to Dashboard</router-link
+					>
+				</section>
 			</nav>
 		</header>
 	</div>
@@ -56,6 +70,9 @@ header {
 				}
 			}
 		}
+		.reg-tools {
+			@include zflex;
+		}
 		.sign {
 			@include zflex;
 			.sign-in {
@@ -70,6 +87,12 @@ header {
 				@include zbtn(#0284c7, 12px 24px);
 				@include zfont(1.125rem, 500, #fff);
 			}
+		}
+		.or-btn {
+			@include zbtn(#f6c25f, 12px 24px);
+			@include zfont(1rem, 500, $gra2clr);
+			cursor: pointer;
+			margin-left: 12px;
 		}
 	}
 }
