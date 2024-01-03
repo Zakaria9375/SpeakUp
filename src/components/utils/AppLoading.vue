@@ -1,82 +1,41 @@
 <template>
-	<div class="z-page z-clr loader-page">
-		<span class="loader">Load&nbsp;ng</span>
-	</div>
+	<div class="z-page loader-page">
+<span class="loader">Loading</span>	</div>
 </template>
 <style lang="scss">
 .loader-page {
-	@include zflex
+	@include zflex;
+	background-color: #fff;
 }
-	.loader {
-  color: #FFF;
-  position: relative;
+.loader {
+  color: #263038;
   display: inline-block;
-  margin-top: 40px;
-  font-family: Arial, Helvetica, sans-serif;
+  position: relative;
   font-size: 48px;
-  letter-spacing: 4px;
+  font-family: Arial, Helvetica, sans-serif;
   box-sizing: border-box;
-}
-.loader::before {
-  content: '';  
-  position: absolute;
-  right: 70px;
-  bottom: 10px;
-  height: 28px;
-  width: 5.15px;
-  background: currentColor;
-  box-sizing: border-box;
-  animation: animloader1 1s linear infinite alternate;
 }
 .loader::after {
   content: '';  
-  width: 10px;
-  height: 10px;
+  width: 5px;
+  height: 5px;
+  background: currentColor;
   position: absolute;
-  left: 125px;
-  top: 2px;
-  border-radius: 50%;
-  background: red;
+  bottom: 10px;
+  right: -5px;
   box-sizing: border-box;
-  animation: animloader 1s linear infinite alternate;
+  animation: animloader 1s linear infinite;
 }
 
 @keyframes animloader {
   0% {
-    transform: translate(0px, 0px) scaleX(1);
+    box-shadow: 10px 0 rgba(0, 0, 0, 0), 20px 0 rgba(0, 0, 0, 0);
   }
-  14% {
-    transform: translate(-12px, -16px) scaleX(1.05);
-  }
-  28% {
-    transform: translate(-27px, -28px) scaleX(1.07);
-  }
-  42% {
-    transform: translate(-46px, -35px) scaleX(1.1);
-  }
-  57% {
-    transform: translate(-70px, -37px) scaleX(1.1);
-  }
-  71% {
-    transform: translate(-94px, -32px) scaleX(1.07);
-  }
-  85% {
-    transform: translate(-111px, -22px) scaleX(1.05);
+  50% {
+    box-shadow: 10px 0 #263038, 20px 0 rgba(0, 0, 0, 0);
   }
   100% {
-    transform: translate(-125px, -9px) scaleX(1);
-  }
-}
-
-@keyframes animloader1 {
-  0% {
-    box-shadow: 0 -6px, -122.9px -8px;
-  }
-  25%, 75% {
-    box-shadow: 0 0px, -122.9px -8px;
-  }
-  100% {
-    box-shadow: 0 0px, -122.9px -16px;
+    box-shadow: 10px 0 #263038, 20px 0 #263038;
   }
 }
 </style>

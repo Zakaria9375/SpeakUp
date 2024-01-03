@@ -23,6 +23,7 @@ const logoLink = computed(() => {
 						<span>Speak up</span>
 					</div>
 				</RouterLink>
+				<button type="button" @click="authStore.logout()">sigout</button>
 				<section class="reg-tools">
 					<SignedUser v-if="authStore.loggedIn" />
 					<div v-else class="sign">

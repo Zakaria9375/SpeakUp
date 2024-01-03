@@ -1,25 +1,32 @@
 <script setup>
-import { onUnmounted, computed, ref } from 'vue'
-import { useThreadStore } from '@/stores/ThreadStore'
+import { computed } from 'vue'
 import { useAccDbStore } from '@/stores/AccDbStore'
-import { client } from '@/config/AppWrite.js'
 import { useToggle } from '@/composables/toggle.js'
-
 import PostCreate from '@/components/posts/PostCreate.vue'
 import ThreadDelete from '@/components/threads/ThreadDelete.vue'
 import PostCard from '@/components/posts/PostCard.vue'
 import ThreadCard from '@/components/threads/ThreadCard.vue'
-
-const ThreadStore = useThreadStore()
+import { useDocumentFetcher } from '@/composables/useDocumentFetcher.js'
 const authId = useAccDbStore().authId
 
 const { id } = defineProps({
 	id: { required: true, type: String },
 })
-const { refValue, open, close } = useToggle()
+const { refValue: create, open: openCreate, close: closeCreate } = useToggle()
 const { refValue: del, open: openDel, close: closeDel } = useToggle()
-const thread = ref(null)
-ThreadStore.getThread(thread, id)
+const events = [
+	'databases.appData.collections.posts.documents',
+	`databases.appData.collections.threads.documents.${id}`,
+]
+const resSubMsg = 'Doc-Sub-Refetch T-page success'
+const resFetchMsg = 'Doc-Fetch T-page success'
+const { response: thread, isReady } = useDocumentFetcher(
+	'threads',
+	id,
+	events,
+	resSubMsg,
+	resFetchMsg
+)
 
 const contributors = computed(() => {
 	const unique = new Set()
@@ -32,23 +39,10 @@ const contributors = computed(() => {
 	}
 	return unique.size
 })
-
-const unsub = client.subscribe(
-	[
-		'databases.appData.collections.posts.documents',
-		`databases.appData.collections.threads.documents.${id}`,
-	],
-	(response) => {
-		ThreadStore.getThread(thread, id)
-		console.log('sub msg from thread page', response)
-	}
-)
-
-onUnmounted(() => unsub())
 </script>
 
 <template>
-	<div v-if="thread" class="thread-page z-page">
+	<div v-if="isReady" class="thread-page z-page">
 		<div class="container">
 			<div class="leading">
 				<div v-if="authId === thread.madeBy.$id" class="form-act">
@@ -59,7 +53,7 @@ onUnmounted(() => unsub())
 				</div>
 
 				<span class="counts"
-					>{{ thread.posts?.length}} replies by {{ contributors }} contributors</span
+					>{{ thread.posts?.length }} replies by {{ contributors }} contributors</span
 				>
 			</div>
 			<ThreadCard :thread="thread" />
@@ -69,22 +63,25 @@ onUnmounted(() => unsub())
 				</div>
 			</div>
 			<div class="form-act">
-				<button type="button" class="zbtn" @click="open">Add new post</button>
+				<button type="button" class="zbtn" @click="openCreate">Add new post</button>
 			</div>
 		</div>
+		<div id="pop">
+			<PopUp v-if="create" @close="closeCreate">
+				<PostCreate v-if="isReady" :threadId="thread.$id" @post-added="closeCreate" />
+			</PopUp>
+			<PopUp class="del-main" v-if="del" @close="closeDel">
+				<ThreadDelete
+					v-if="isReady"
+					:id="thread.$id"
+					:forumId="thread.forum.$id"
+					@thread-deleted="closeDel"
+					@cancel="closeDel"
+				/>
+			</PopUp>
+		</div>
 	</div>
-	<PopUp v-if="refValue" @close="close">
-		<PostCreate v-if="thread" :threadId="thread.$id" @post-added="close"/>
-	</PopUp>
-	<PopUp class="del-main" v-if="del" @close="closeDel">
-		<ThreadDelete
-			v-if="thread"
-			:id="thread.$id"
-			:forumId="thread.forum.$id"
-			@thread-deleted="closeDel"
-			@cancel="closeDel"
-		/>
-	</PopUp>
+	<AppLoading v-else/>
 </template>
 
 <style lang="scss">

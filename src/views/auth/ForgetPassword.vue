@@ -1,18 +1,31 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { useAuthStore } from '@/stores/AuthStore.js'
+import { ref } from 'vue'
 import { forgetPasswordSchema } from '@/validations/schemas.js'
 import { useForm } from 'vee-validate'
-
+import { account } from '@/config/AppWrite.js'
+import { useToggle } from '@/composables/toggle.js'
+const { refValue: msgPop, open: openMsg, close: closeMsg } = useToggle()
 const { defineField, handleSubmit, errors, validate } = useForm({
 	validationSchema: forgetPasswordSchema,
 })
 const [email, emailAttrs] = defineField('email')
-const authStore = useAuthStore()
 const onSubmit = handleSubmit(async (values) => {
 	const { valid } = await validate()
 	if (valid) {
-		console.log(values)
+		const emailValue = values.email
+		openMsg()
+		const promise = await account.createRecovery(
+			emailValue,
+			'https://speak-up.zaportfolio.com/password-recovery'
+		)
+		promise.then(
+			(res) => {
+				console.log('password-recovery success', res)
+			},
+			(err) => {
+				console.log('password-recovery error', err)
+			}
+		)
 	}
 })
 </script>
@@ -41,6 +54,14 @@ const onSubmit = handleSubmit(async (values) => {
 			</div>
 		</div>
 	</div>
+	<PopUp class="del-main" v-if="msgPop" @close="closeMsg">
+		<div class="photo">
+			<img src="/static/forget/msg-r.png" alt="new massage" />
+		</div>
+		<p class="v-text">
+			An email has been sent to you. Please, check your email to complete verification process.
+		</p>
+	</PopUp>
 </template>
 <style lang="scss">
 .fp-page {

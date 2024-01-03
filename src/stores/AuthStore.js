@@ -8,13 +8,6 @@ import { useAccDbStore } from '@/stores/AccDbStore'
 export const useAuthStore = defineStore('AuthStore', () => {
 	const loginErr = ref('')
 	const loggedIn = useLocalStorage('loggedIn', false)
-	// function updateLastLoginTime(response) {
-	// 	let id = response.userId
-	// 	let lastLoginTime = new Date().toISOString()
-	// 	databases.updateDocument('appData', 'users', id, {
-	// 		lastVisitAt: lastLoginTime,
-	// 	})
-	// }
 	function login(data) {
 		const operation = account.createEmailSession(data.email, data.password)
 		return executeOperation(operation, 'Login Successful', 'Login Failed').then(
@@ -23,24 +16,27 @@ export const useAuthStore = defineStore('AuthStore', () => {
 				loggedIn.value = true
 				useAccDbStore().getAccUser()
 				router.push({ name: 'home' })
-			}, (err) => loginErr.value = err
+			},
+			(err) => (loginErr.value = err)
 		)
 	}
 	function logout(id) {
 		const operation = account.deleteSession('current')
-		return executeOperation(operation, 'Logout Successful', 'Logout Failed').then(
-			(res) => {
-				updateUserStatus(id, false)
-				loggedIn.value = false
-				router.push({ name: 'welcome' })
-			}
-		)
+		return executeOperation(operation, 'Logout Successful', 'Logout Failed').then((res) => {
+			updateUserStatus(id, false)
+			loggedIn.value = false
+			router.push({ name: 'welcome' })
+		})
 	}
-	
+	function onLoginSuccess() {
+		loggedIn.value = true
+	}
+
 	return {
 		loggedIn,
 		loginErr,
 		login,
 		logout,
+		onLoginSuccess
 	}
 })

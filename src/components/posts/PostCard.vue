@@ -10,7 +10,7 @@ const { post } = defineProps({
 	onlineDisplay: { required: false, type: Boolean, default: true },
 })
 const { refValue: edit, open: openEdit, close: closeEdit } = useToggle()
-const { refValue: del, open: openDel, close: closeDel } = useToggle()
+const { refValue: deleting, open: openDelete, close: closeDelete } = useToggle()
 </script>
 <template>
 	<div class="post">
@@ -31,7 +31,7 @@ const { refValue: del, open: openDel, close: closeDel } = useToggle()
 			<button class="editA nobtn" @click="openEdit" title="Make a change">
 				<i class="fa fa-pencil"></i>
 			</button>
-			<button class="editA nobtn" @click="openDel" title="Delete post">
+			<button class="editA nobtn" @click="openDelete" title="Delete post">
 				<i class="fa-solid fa-trash-can"></i>
 			</button>
 		</div>
@@ -44,8 +44,8 @@ const { refValue: del, open: openDel, close: closeDel } = useToggle()
 		<PostUpdate v-if="post" :post="post" @post-updated="closeEdit" />
 	</PopUp>
 
-	<PopUp class="del-main" v-if="del" @close="closeDel">
-		<PostDelete v-if="post" :id="post.$id" @post-deleted="closeDel" @cancel="closeDel" />
+	<PopUp class="del-main" v-if="deleting" @close="closeDelete">
+		<PostDelete v-if="post" :id="post.$id" @post-deleted="closeDelete" @cancel="closeDelete" />
 	</PopUp>
 </template>
 <style lang="scss">

@@ -1,9 +1,10 @@
 <script setup>
 import { useAuthStore } from '@/stores/AuthStore'
-import {onMounted} from 'vue'
 import { useCategoryStore } from '@/stores/CategoryStore'
 import ForumList from '@/components/ForumList.vue'
 import { useRouter } from 'vue-router';
+import { ref,onMounted } from 'vue'
+
 const authStore = useAuthStore()
 const CategoryStore = useCategoryStore()
 const router = useRouter()
@@ -13,10 +14,15 @@ onMounted(() => {
 		router.push({name: 'welcome'})
 	}
 })
+
+const isReady = ref(false)
+onMounted(() => {
+	setTimeout(() => isReady.value = true, 1000)
+})
 </script>
 
 <template>
-	<div>
+	<div v-show="isReady">
 		<div v-if="authStore.loggedIn" class="main-page z-page z-clr p-32">
 			<div class="container">
 				<div v-for="category in CategoryStore.categories" :key="category.$id">
@@ -30,4 +36,5 @@ onMounted(() => {
 			</div>
 		</div>
 	</div>
+	<AppLoading v-show="!isReady" />
 </template>

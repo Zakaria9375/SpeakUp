@@ -10,7 +10,7 @@ ThreadStore.lastThread(lastThread, id)
 </script>
 
 <template>
-	<div class="eval">
+	<div v-if="lastThread" class="eval">
 		<span class="title">Last thread:</span>
 		<div class="last-thread" v-if="lastThread">
 			<router-link :to="{ name: 'profile', params: { id: lastThread.madeBy.$id } }">

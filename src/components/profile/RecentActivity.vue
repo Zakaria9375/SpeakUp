@@ -12,10 +12,11 @@ const { id } = defineProps({
 	id: { type: String, required: true },
 })
 
+const isReady = computed(() => (threads.value && posts.value ? true : false))
 const currentFilter = ref('all')
 const btns = ['threads', 'posts', 'all']
 const all = computed(() => {
-	if (threads.value && posts.value) {
+	if (isReady.value) {
 		const combined = [...threads.value, ...posts.value]
 		combined.sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt))
 		return combined
@@ -38,7 +39,6 @@ const setFilter = (newValue) => {
 }
 postStore.getPostsByUserId(posts, id)
 threadStore.getThreadsByUserId(threads, id)
-
 onMounted(() => {})
 </script>
 
@@ -61,20 +61,18 @@ onMounted(() => {})
 		<div v-if="filteredArray" class="activity-list">
 			<div v-for="(item, index) in filteredArray" :key="index">
 				<div v-if="item.$collectionId">
-					<ThreadCard v-if="item.$collectionId === 'threads'" :onlineDisplay="false" :thread="item" />
+					<div class="thread-view" v-if="item.$collectionId === 'threads'">
+						<router-link
+							:to="{ name: 'thread', params: { id: item.$id } }"
+							class="thread-link"
+							title="Visit the thread"
+							><i class="fa-solid fa-arrow-up-right-from-square"></i></router-link
+						><ThreadCard :onlineDisplay="false" :thread="item" />
+					</div>
+
 					<PostCard v-if="item.$collectionId === 'posts'" :onlineDisplay="false" :post="item" />
 				</div>
 			</div>
-			<!-- <div v-if="threads">
-				<div v-for="thread in threads">
-					<ThreadCard :thread="thread" />
-				</div>
-			</div>
-			<div v-if="posts">
-				<div v-for="post in posts">
-					<PostCard :post="post" />
-				</div>
-			</div> -->
 		</div>
 	</div>
 </template>
@@ -88,7 +86,7 @@ onMounted(() => {})
 	.profile-header {
 		@include zflex(row, wrap, space-between);
 		padding: 0 12px 8px;
-		@include less($smS){
+		@include less($smS) {
 			@include zflex(column);
 			padding: 0 12px 16px;
 			h4 {
@@ -113,6 +111,25 @@ onMounted(() => {})
 			.active-filter {
 				@include zbtn($bluclr, 8px 12px);
 				color: #fff;
+			}
+		}
+	}
+	.activity-list {
+		.thread-view {
+			position: relative;
+			.thread-link {
+				position: absolute;
+				right: 15px;
+				top: 65px;
+				z-index: 3;
+				i {
+					font-size: 1.125rem;
+					color: $darkblue;
+					cursor: pointer;
+					&:hover {
+						font-size: 1.25rem;
+					}
+				}
 			}
 		}
 	}

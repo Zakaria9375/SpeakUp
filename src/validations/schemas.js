@@ -17,15 +17,10 @@ export const loginSchema = toTypedSchema(
 
 export const registerSchema = toTypedSchema(
 	yup.object({
-		firstName: yup
+		fullName: yup
 			.string()
-			.required('First name is required')
-			.min(2, 'First name must be at least 2 characters')
-			.transform((value) => value.trim()),
-		lastName: yup
-			.string()
-			.required('Last name is required')
-			.min(2, 'Last name must be at least 2 characters')
+			.required('Full Name is required')
+			.matches(/^[A-Za-z]+(?:\s[A-Za-z]+)+$/, 'Please enter both first and last name')
 			.transform((value) => value.trim()),
 		email: yup
 			.string()
@@ -73,5 +68,32 @@ export const contactSchema = toTypedSchema(
 		message: yup
 			.string()
 			.required('Message is required')
+	})
+)
+
+export const changePassword = toTypedSchema(
+	yup.object({
+		oldPassword: yup.string().required('Old Password is required'),
+		newPassword: yup
+			.string()
+			.required('Password is required')
+			.min(8, 'Password must be at least 8 characters'),
+		confirmPassword: yup
+			.string()
+			.required('Confirm Password is required')
+			.oneOf([yup.ref('newPassword')], 'Passwords must match'),
+	})
+)
+
+export const passwordRecovery = toTypedSchema(
+	yup.object({
+		newPassword: yup
+			.string()
+			.required('Password is required')
+			.min(8, 'Password must be at least 8 characters'),
+		confirmPassword: yup
+			.string()
+			.required('Confirm Password is required')
+			.oneOf([yup.ref('newPassword')], 'Passwords must match'),
 	})
 )

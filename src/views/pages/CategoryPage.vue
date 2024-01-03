@@ -1,7 +1,7 @@
 <script setup>
 import ForumList from '@/components/ForumList.vue'
 import { useCategoryStore } from '@/stores/CategoryStore'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 const CategoryStore = useCategoryStore()
 const { id } = defineProps({
@@ -15,18 +15,21 @@ const category = computed(() => {
 		return CategoryStore.categories.find((c) => c.$id === id)
 	}
 })
+const isReady = ref(false)
+setTimeout(() => isReady.value = true, 300)
 </script>
 
 <template>
-	<div class="category-page z-page z-clr p-32">
+	<div v-if="isReady" class="category-page z-page z-clr p-32">
 		<div class="container">
 			<div class="c-details">
 				<h1>{{ category.name }}</h1>
 			</div>
 
-			<ForumList v-if="category.forums" :forums="category.forums" />
+			<ForumList v-if="category.forums" :forums="category.forums"/>
 		</div>
 	</div>
+	<AppLoading v-else />
 </template>
 <style lang="scss">
 .category-page {

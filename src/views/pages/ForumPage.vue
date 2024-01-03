@@ -1,30 +1,26 @@
 <script setup>
-import { ref, onUnmounted } from 'vue'
-import { client } from '@/config/AppWrite.js'
 import ThreadList from '@/components/threads/ThreadList.vue'
-import { useForumStore } from '@/stores/ForumStore'
-const ForumStore = useForumStore()
+import { useDocumentFetcher } from '@/composables/useDocumentFetcher.js'
 const { id } = defineProps({
 	id: { required: true, type: String },
 })
-const forum = ref(null)
-ForumStore.getForum(forum, id)
-const unsub = client.subscribe(
-	[
-		'databases.appData.collections.threads.documents',
-		`databases.appData.collections.forums.documents.${id}`,
-	],
-	(response) => {
-		ForumStore.getForum(forum, id)
-		console.log('sub msg from forum page', response)
-	}
+const events = [
+	'databases.appData.collections.threads.documents',
+	`databases.appData.collections.forums.documents.${id}`,
+]
+const resSubMsg = 'Doc-Sub-Refetch F-page success'
+const resFetchMsg = 'Doc-Fetch F-page success'
+const { response: forum, isReady } = useDocumentFetcher(
+	'forums',
+	id,
+	events,
+	resSubMsg,
+	resFetchMsg
 )
-
-onUnmounted(() => unsub())
 </script>
 
 <template>
-	<div v-if="forum" class="forum-page z-page z-clr p-32">
+	<div v-if="isReady" class="forum-page z-page z-clr p-32">
 		<div class="container">
 			<div class="f-header">
 				<div class="f-details">
@@ -40,6 +36,7 @@ onUnmounted(() => unsub())
 			<ThreadList v-if="forum.threads" :threads="forum.threads" />
 		</div>
 	</div>
+	<AppLoading v-else/>
 </template>
 <style lang="scss">
 .forum-page {

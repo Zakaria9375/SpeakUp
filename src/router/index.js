@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAccDbStore } from '@/stores/AccDbStore'
-import { useAuthStore } from '@/stores/AuthStore'
-import WelcomePage from '@/views/pages/WelcomePage.vue'
+import WelcomePage from '@/views/static/WelcomePage.vue'
 import HomePage from '@/views/pages/HomePage.vue'
 
 const router = createRouter({
@@ -21,10 +19,10 @@ const router = createRouter({
 		{
 			path: '/contact-us',
 			name: 'contact',
-			component: () => import('@/views/pages/ContactPage.vue'),
+			component: () => import('@/views/static/ContactPage.vue'),
 		},
 
-		//Auth pages 4
+		//Auth pages 6
 		{
 			path: '/login',
 			name: 'login',
@@ -40,15 +38,25 @@ const router = createRouter({
 			name: 'forgetPass',
 			component: () => import('@/views/auth/ForgetPassword.vue'),
 		},
-		// {
-		// 	path: '/myprofile',
-		// 	name: 'myprofile',
-		// 	component: () => import('@/views/auth/ProfilePage.vue'),
-		// },
 		{
 			path: '/account',
 			name: 'account',
 			component: () => import('@/views/auth/AccountPage.vue'),
+		},
+		{
+			path: '/verify-email',
+			name: 'verifyEmail',
+			component: () => import('@/views/auth/EmailVerify.vue'),
+		},
+		{
+			path: '/password-reset',
+			name: 'passwordReset',
+			component: () => import('@/views/auth/PasswordRecovery.vue'),
+		},
+		{
+			path: '/google-login-success',
+			name: 'google-success',
+			component: () => import('@/components/sign/GoogleSuccess.vue'),
 		},
 		//main pages 4
 		{
@@ -77,16 +85,6 @@ const router = createRouter({
 			name: 'profile',
 			component: () => import('@/views/pages/ProfileView.vue'),
 			props: (route) => ({ ...route.params, id: route.params.id }),
-			// beforeEnter: (to, from, next) => {
-			// 	const id = to.params.id
-			// 	const authId = useAccDbStore().authId
-			// 	if (id === authId) {
-			// 		console.log('redirecting to myprofile')
-			// 		next({ name: 'myprofile' })
-			// 	} else {
-			// 		next()
-			// 	}
-			// },
 		},
 		//helpers pages 2
 		{
@@ -107,19 +105,11 @@ const router = createRouter({
 		{
 			path: '/:pathMatch(.*)*',
 			name: 'NotFound',
-			component: () => import('@/views/pages/NotFoundPage.vue'),
+			component: () => import('@/views/static/NotFoundPage.vue'),
 		},
 	],
 })
 export default router
 
-// router.beforeEach((to, from, next) => {
-// 	const authStore = useAuthStore()
-// 	if (to.meta.requiresAuth && !authStore.isLoggedIn) {
-// 		next({ name: 'login' })
-// 	} else {
-// 		next()
-// 	}
-// })
 
 

@@ -1,75 +1,58 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useAccDbStore } from '@/stores/AccDbStore.js'
 import { registerSchema } from '@/validations/schemas.js'
 import { useForm } from 'vee-validate'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/AuthStore.js'
+import GoogleSignIn from '@/components/sign/GoogleSignIn.vue'
 
 const { defineField, handleSubmit, errors, validate } = useForm({
 	validationSchema: registerSchema,
 })
+const router = useRouter()
+const authStore = useAuthStore()
 
 const AccDbStore = useAccDbStore()
-const [firstName, firstNameAttrs] = defineField('firstName')
-const [lastName, lastNameAttrs] = defineField('lastName')
+const [fullName, fullNameAttrs] = defineField('fullName')
 const [email, emailAttrs] = defineField('email')
 const [password, passwordAttrs] = defineField('password')
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword')
 const outputErr = computed(() => AccDbStore.registerErr)
 
-const theFullName = computed(() => {
-	return firstName.value.trim() + ' ' + lastName.value.trim()
-})
-const theUserName = computed(() => {
-	const nameRef =
-		firstName.value.toLowerCase().trim() +
-		lastName.value.toLowerCase().trim() +
-		Math.floor(Math.random() * 1000)
-	return nameRef
-})
-
 const onSubmit = handleSubmit(async (values) => {
 	const { valid } = await validate()
 	if (valid) {
-		const userName = theUserName.value
-		const fullName = theFullName.value
-		const data = {
-			userName,
-			fullName,
-			...values,
-		}
-		AccDbStore.createAccUser(data)
+		AccDbStore.createAccUser(values)
+	}
+})
+onMounted(() => {
+	if (authStore.loggedIn) {
+		router.push({ name: 'home' })
 	}
 })
 </script>
 
 <template>
-	<div class="z-page z-clr sign-page">
+	<div class="z-page z-clr sign-page p-16">
 		<div class="container">
+			<div class="sp-heading noneLS">
+				<h1>Sign Up</h1>
+				<p>Join Us Today!</p>
+			</div>
 			<div class="signup-container">
-				<div class="sp-heading">
-					<h1>Sign Up</h1>
-					<p>Join Us Today!</p>
-				</div>
 				<form @submit.prevent="onSubmit" class="signup-form">
 					<BI
 						type="text"
-						title="First name"
-						nom="firstName"
-						v-model="firstName"
-						v-bind="firstNameAttrs"
-						:errorMessage="errors.firstName"
-					/>
-					<BI
-						type="text"
-						title="Last name"
-						nom="lastName"
-						v-model="lastName"
-						v-bind="lastNameAttrs"
-						:errorMessage="errors.lastName"
+						placeholder="Full name"
+						nom="fullName"
+						v-model="fullName"
+						v-bind="fullNameAttrs"
+						:errorMessage="errors.fullName"
 					/>
 					<BI
 						type="email"
-						title="Email"
+						placeholder="Email"
 						nom="email"
 						v-model="email"
 						v-bind="emailAttrs"
@@ -77,7 +60,7 @@ const onSubmit = handleSubmit(async (values) => {
 					/>
 					<BI
 						type="password"
-						title="Password"
+						placeholder="Password"
 						nom="password"
 						v-model="password"
 						v-bind="passwordAttrs"
@@ -85,7 +68,7 @@ const onSubmit = handleSubmit(async (values) => {
 					/>
 					<BI
 						type="password"
-						title="Confirm Password"
+						placeholder="Confirm Password"
 						nom="confirmPassword"
 						v-model="confirmPassword"
 						v-bind="confirmPasswordAttrs"
@@ -94,6 +77,7 @@ const onSubmit = handleSubmit(async (values) => {
 					<button type="submit" class="signup">Sign Up</button>
 				</form>
 				<div class="error-message" v-if="outputErr">{{ outputErr }}</div>
+				<GoogleSignIn/>
 				<p class="sign-link">
 					Already have an account?
 					<router-link to="/login" title="Do you have an account?!" class="link"
@@ -107,25 +91,18 @@ const onSubmit = handleSubmit(async (values) => {
 
 <style lang="scss">
 .sign-page {
+	@include zflex(column);
 	.container {
-		padding-top: 24px;
+		@include zflex;
+		gap: 5%;
 		.signup-container {
-			margin: 0 auto;
 			max-width: 400px;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
+			flex: 1;
+			@include zflex(column);
 			.signup-form {
-				padding: 20px;
+				padding: 16px 0;
 				width: 100%;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				h2 {
-					text-align: center;
-					color: #333;
-				}
-
+				@include zflex(column);
 				.signup {
 					@include zbtn;
 					@include zfont(1.2rem, 600, #fff);

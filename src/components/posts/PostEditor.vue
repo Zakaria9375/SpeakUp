@@ -14,6 +14,7 @@ const content = ref(props.content)
 function save() {
 	const post = {
 		content: content.value,
+		madeBy: user.value.$id
 	}
 	emit('save', post)
 }

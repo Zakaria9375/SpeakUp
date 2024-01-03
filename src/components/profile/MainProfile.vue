@@ -2,7 +2,7 @@
 import ProfileCard from '@/components/profile/ProfileCard.vue'
 import ProfileEdit from '@/components/profile/ProfileEdit.vue'
 import { useToggle } from '@/composables/toggle.js'
-import { computed, ref, onMounted } from 'vue'
+import { computed, ref } from 'vue'
 import { useUserStore } from '@/stores/UserStore'
 import { useAccDbStore } from '@/stores/AccDbStore'
 const AccDbStore = useAccDbStore()
@@ -20,10 +20,6 @@ userStore.getUser(user, id)
 function updateProfile(data) {
 	console.log(data)
 }
-
-onMounted(() => {
-
-})
 </script>
 
 <template>

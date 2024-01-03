@@ -7,7 +7,7 @@ import { createPinia } from 'pinia'
 import BaseInput from '@/components/utils/BaseInput.vue'
 import BaseDate from '@/components/utils/BaseDate.vue'
 import PopUp from '@/components/utils/PopUp.vue'
-import BaseSpinner from '@/components/utils/BaseSpinner.vue'
+import AppLoading from '@/components/utils/AppLoading.vue'
 
 import App from './App.vue'
 import router from './router'
@@ -21,6 +21,6 @@ app.use(router)
 app.component('BI', BaseInput)
 app.component('BaseDate', BaseDate)
 app.component('PopUp', PopUp)
-app.component('Spinner', BaseSpinner)
+app.component('AppLoading', AppLoading)
 
 app.mount('#app')
